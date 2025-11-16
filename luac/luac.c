@@ -497,10 +497,10 @@ static void PrintCode(const Proto* f)
 	printf("%d %d %d",a,b,c);
 	printf(COMMENT); PrintConstant(f,c);
 	break;
-   case OP_SHRI:
+   case OP_SHLI:
 	printf("%d %d %d",a,b,sc);
 	break;
-   case OP_SHLI:
+   case OP_SHRI:
 	printf("%d %d %d",a,b,sc);
 	break;
    case OP_ADD:
@@ -664,6 +664,13 @@ static void PrintCode(const Proto* f)
 	printf(COMMENT);
 	if (c==0) printf("all out"); else printf("%d out",c-1);
 	break;
+   case OP_GETVARG:
+	printf("%d %d %d",a,b,c);
+	break;
+   case OP_ERRNNIL:
+	printf("%d %d",a,bx);
+	printf(COMMENT); PrintConstant(f,bx);
+	break;
    case OP_VARARGPREP:
 	printf("%d",a);
 	break;
@@ -680,7 +687,6 @@ static void PrintCode(const Proto* f)
   printf("\n");
  }
 }
-
 
 #define SS(x)	((x==1)?"":"s")
 #define S(x)	(int)(x),SS(x)
