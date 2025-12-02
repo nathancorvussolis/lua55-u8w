@@ -2701,7 +2701,7 @@ The form
 </pre><p>
 can be used to emulate methods.
 A call <code>v:name(<em>args</em>)</code>
-is syntactic sugar for <code>v.name(v,<em>args</em>)</code>,
+is syntactic sugar for <code>v.name(v, <em>args</em>)</code>,
 except that <code>v</code> is evaluated only once.
 
 
@@ -2885,14 +2885,10 @@ which is indicated by three dots ('<code>...</code>')
 at the end of its parameter list.
 A variadic function does not adjust its argument list;
 instead, it collects all extra arguments and supplies them
-to the function through a <em>vararg expression</em> and,
-if present, a <em>vararg table</em>.
-
-
-<p>
-A vararg expression is also written as three dots,
-and its value is a list of all actual extra arguments,
-similar to a function with multiple results (see <a href="#3.4.12">&sect;3.4.12</a>).
+to the function through a <em>vararg table</em>.
+In that table,
+the values at indices 1, 2, etc. are the extra arguments,
+and the value at index "<code>n</code>" is the number of extra arguments.
 
 
 <p>
@@ -2904,7 +2900,7 @@ As an example, consider the following definitions:
      function r() return 1,2,3 end
 </pre><p>
 Then, we have the following mapping from arguments to parameters and
-to the vararg expression:
+to the vararg table:
 
 <pre>
      CALL             PARAMETERS
@@ -2915,35 +2911,44 @@ to the vararg expression:
      f(r(), 10)       a=1, b=10
      f(r())           a=1, b=2
      
-     g(3)             a=3, b=nil, ... -&gt;  (nothing)
-     g(3, 4)          a=3, b=4,   ... -&gt;  (nothing)
-     g(3, 4, 5, 8)    a=3, b=4,   ... -&gt;  5  8
-     g(5, r())        a=5, b=1,   ... -&gt;  2  3
+     g(3)             a=3, b=nil, va. table -&gt;  {n = 0}
+     g(3, 4)          a=3, b=4,   va. table -&gt;  {n = 0}
+     g(3, 4, 5, 8)    a=3, b=4,   va. table -&gt;  {5, 8, n = 2}
+     g(5, r())        a=5, b=1,   va. table -&gt;  {2, 3, n = 2}
 </pre>
 
 <p>
-The presence of a varag table in a variadic function is indicated
-by a name after the three dots.
+A vararg table in a variadic function can have an optional name,
+given after the three dots.
 When present,
-a vararg table behaves like a read-only local variable
-with the given name that is initialized with a table.
-In that table,
-the values at indices 1, 2, etc. are the extra arguments,
-and the value at index "<code>n</code>" is the number of extra arguments.
-In other words, the code behaves as if the function started with
-the following statement,
-assuming the standard behavior of <a href="#pdf-table.pack"><code>table.pack</code></a>:
+that name denotes a read-only local variable that
+refers to the vararg table.
+If the vararg table does not have a name,
+it can only be accessed through a vararg expression.
 
-<pre>
-     local &lt;const&gt; name = table.pack(...)
-</pre>
+
+<p>
+A vararg expression is also written as three dots,
+and its value is a list of the values in the vararg table,
+from 1 to the integer value at index "<code>n</code>".
+(Therefore, if the code does not modify the vararg table,
+this list corresponds to the extra arguments in the function call.)
+This list behaves like the results from a
+function with multiple results (see <a href="#3.4.12">&sect;3.4.12</a>).
+
 
 <p>
 As an optimization,
-if the vararg table is used only as a base in indexing expressions
-(the <code>t</code> in <code>t[exp]</code> or <code>t.id</code>) and it is not an upvalue,
+if the vararg table satisfies some conditions,
 the code does not create an actual table and instead translates
-the indexing expressions into accesses to the internal vararg data.
+the indexing expressions and the vararg expressions
+into accesses to the internal vararg data.
+The conditions are as follows:
+If the vararg table has a name,
+that name is not an upvalue in a nested function
+and it is used only as the base table
+in the syntactic constructions <code>t[exp]</code> or <code>t.id</code>).
+Note that an anonymous vararg table always satisfy these conditions.
 
 
 
@@ -2951,8 +2956,7 @@ the indexing expressions into accesses to the internal vararg data.
 
 
 
-<h3>3.4.12 &ndash; <a name="3.4.12">Lists of expressions, multiple results,
-and adjustment</a></h3>
+<h3>3.4.12 &ndash; <a name="3.4.12">Lists of Expressions, Multiple Results, and Adjustment</a></h3>
 
 <p>
 Both function calls and vararg expressions can result in multiple values.
@@ -3256,7 +3260,7 @@ which behaves like a nil value.
 
 
 
-<h3>4.1.3 &ndash; <a name="4.1.3">Pointers to strings</a></h3>
+<h3>4.1.3 &ndash; <a name="4.1.3">Pointers to Strings</a></h3>
 
 <p>
 Several functions in the API return pointers (<code>const char*</code>)
@@ -3751,7 +3755,7 @@ auxiliary library.
 </pre><p>
 Note that ISO&nbsp;C ensures
 that <code>free(NULL)</code> has no effect and that
-<code>realloc(NULL,size)</code> is equivalent to <code>malloc(size)</code>.
+<code>realloc(NULL, size)</code> is equivalent to <code>malloc(size)</code>.
 
 
 
@@ -5111,6 +5115,10 @@ Even when using an external buffer,
 Lua still has to allocate a header for the string.
 In case of a memory-allocation error,
 Lua will call <code>falloc</code> before raising the error.
+
+
+<p>
+The function returns a pointer to the string (that is, <code>s</code>).
 
 
 
@@ -10726,7 +10734,7 @@ a value greater than any other numeric value.
 
 
 <p>
-<hr><h3><a name="pdf-math.ldexp"><code>math.ldexp(m, e)</code></a></h3>
+<hr><h3><a name="pdf-math.ldexp"><code>math.ldexp (m, e)</code></a></h3>
 
 
 <p>
@@ -11794,6 +11802,12 @@ Compile-time constants may not appear in this listing,
 if they were optimized away by the compiler.
 Negative indices refer to vararg arguments;
 -1 is the first vararg argument.
+These negative indices are only available when the vararg table
+has been optimized away;
+otherwise, the vararg arguments are available in the vararg table.
+
+
+<p>
 The function returns <b>fail</b>
 if there is no variable with the given index,
 and raises an error when called with a level out of range.
@@ -12485,7 +12499,7 @@ and LiteralString, see <a href="#3.1">&sect;3.1</a>.)
 
 <P CLASS="footer">
 Last update:
-Sat Nov 15 00:41:28 UTC 2025
+Mon Dec  1 13:38:36 UTC 2025
 </P>
 <!--
 Last change: revised for Lua 5.5.0
