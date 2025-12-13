@@ -16,13 +16,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{3AE073E5-436
 	ProjectSection(SolutionItems) = preProject
 		doc\contents.html = doc\contents.html
 		doc\index.css = doc\index.css
-		doc\logo.gif = doc\logo.gif
+		doc\logo.png = doc\logo.png
 		doc\lua.1 = doc\lua.1
 		doc\lua.css = doc\lua.css
 		doc\luac.1 = doc\luac.1
 		doc\manual.css = doc\manual.css
 		doc\manual.html = doc\manual.html
-		doc\osi-certified-72x60.png = doc\osi-certified-72x60.png
+		doc\OSIApproved_100X125.png = doc\OSIApproved_100X125.png
 		doc\readme.html = doc\readme.html
 	EndProjectSection
 EndProject
