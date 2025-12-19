@@ -1,7 +1,7 @@
 lua55-u8w
 ======
 
-Lua 5.5.0 (rc3) with UTF-8 Wrapper for Windows
+Lua 5.5.0 (rc4) with UTF-8 Wrapper for Windows
 
 Converting from UTF-8 to UTF-16(LE) and vice versa at Windows API and C runtime functions.
 

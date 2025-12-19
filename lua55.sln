@@ -22,7 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{3AE073E5-436
 		doc\luac.1 = doc\luac.1
 		doc\manual.css = doc\manual.css
 		doc\manual.html = doc\manual.html
-		doc\OSIApproved_100X125.png = doc\OSIApproved_100X125.png
+		doc\OSIApproved.png = doc\OSIApproved.png
 		doc\readme.html = doc\readme.html
 	EndProjectSection
 EndProject
